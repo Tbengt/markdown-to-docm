@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "markdown-to-docm"
+version = "0.1.0"
+description = "Convert Markdown files with PlantUML diagrams to .docm Word documents"
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.0",
+    "python-docx>=1.1",
+    "mistune>=3.0,<4.0",
+    "requests>=2.28",
+]
+
+[project.scripts]
+md2docm = "markdown_to_docm.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["markdown_to_docm*"]
