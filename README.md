@@ -1,6 +1,6 @@
 # markdown-to-docm
 
-A CLI tool that converts Markdown files containing PlantUML diagrams to `.docm` (Word macro-enabled) documents, using a `.docm` template file to control styles and formatting.
+A CLI tool that appends rendered Markdown (with PlantUML diagrams) to an existing `.docx` or `.docm` Word document. The title page, header, footer, table of contents, and all existing content in the document are preserved.
 
 ## Installation
 
@@ -11,7 +11,7 @@ pip install -e .
 ## Usage
 
 ```bash
-md2docm INPUT -t TEMPLATE -o OUTPUT [OPTIONS]
+md2docm INPUT -d DOCUMENT -o OUTPUT [OPTIONS]
 ```
 
 ### Arguments and options
@@ -19,27 +19,33 @@ md2docm INPUT -t TEMPLATE -o OUTPUT [OPTIONS]
 | Argument / Option | Short | Required | Description |
 |---|---|---|---|
 | `INPUT` | | Yes | Path to the input Markdown file |
-| `--template PATH` | `-t` | Yes | Path to the `.docm` template file |
-| `--output PATH` | `-o` | Yes | Path for the output `.docm` file |
+| `--document PATH` | `-d` | Yes | Path to the `.docx`/`.docm` file to append content to |
+| `--output PATH` | `-o` | Yes | Path for the output file |
 | `--plantuml-server URL` | `-s` | No | Base URL of the PlantUML server (default: `http://www.plantuml.com/plantuml`) |
 
 ### Examples
 
-Convert using the default PlantUML server:
+Append using the default PlantUML server:
 ```bash
-md2docm document.md -t my_template.docm -o output.docm
+md2docm content.md -d my_document.docm -o output.docm
 ```
 
-Convert using a self-hosted PlantUML server:
+Append using a self-hosted PlantUML server:
 ```bash
-md2docm document.md -t my_template.docm -o output.docm -s http://plantuml.my-company.local
+md2docm content.md -d my_document.docm -o output.docm -s http://plantuml.my-company.local
 ```
+
+## How it works
+
+The tool opens the specified `.docx`/`.docm` file, inserts a page break after the existing content, then appends the rendered Markdown. The output is saved to the path specified by `--output`, leaving the original document untouched.
+
+All existing content is preserved — title page, headers, footers, table of contents, styles, and macros.
 
 ## Supported Markdown features
 
 ### Headings
 
-Headings map to the corresponding Word heading styles (`Heading 1` through `Heading 6`) defined in the template.
+Headings map to the corresponding Word heading styles (`Heading 1` through `Heading 6`) as defined in the document.
 
 ```markdown
 # Heading 1
@@ -104,12 +110,6 @@ Bob --> Alice: Hi!
 ````
 
 If the server cannot be reached or returns an error, a placeholder error message is inserted in the document instead.
-
-## Templates
-
-Any `.docm` file can be used as a template. When the conversion runs, all body content in the template is removed and replaced with the converted Markdown content. Page layout, margins, headers, footers, and all styles defined in the template are preserved.
-
-Make sure your template defines the Word styles your document uses — the standard styles (`Heading 1`–`Heading 6`, `Normal`, `List Bullet`, `List Number`, `Table Grid`) are present in every Word document by default.
 
 ## Not currently supported
 
